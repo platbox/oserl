@@ -446,7 +446,7 @@ handle_event({input, CmdId, Pdu, _Lapse, _Timestamp}, Stn, Std)
                     handle_peer_resp({ok, Pdu}, Ref, Std),
                     {next_state, Stn, Std};
                 Status ->
-                    Reason = {command_status, Status},
+                    Reason = {command_status, Status, SeqNum},
                     handle_peer_resp({error, Reason}, Ref, Std),
                     {next_state, Stn, Std}
             end;
@@ -651,8 +651,8 @@ send_enquire_link(St) ->
 
 send_request(CmdId, Params, From, St) ->
     Ref = make_ref(),
-    gen_fsm:reply(From, Ref),
     SeqNum = ?INCR_SEQUENCE_NUMBER(St#st.sequence_number),
+    gen_fsm:reply(From, {Ref, SeqNum}),
     Pdu = smpp_operation:new(CmdId, SeqNum, Params),
     case smpp_operation:pack(Pdu) of
         {ok, BinPdu} ->

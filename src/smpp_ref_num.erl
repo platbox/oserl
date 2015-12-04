@@ -47,9 +47,16 @@ next(Tab, Key) ->
     try
         ets:update_counter(Tab, Key, 1)
     catch
-        _:_ ->
-            Tab = ets:new(Tab, [set, public, named_table]),
-            true = ets:insert(Tab, {Key, 1}),
-            1
+        error:_ ->
+            populate(Tab, Key)
     end.
 
+populate(Tab, Key) ->
+    try
+        Tab = ets:new(Tab, [set, public, named_table]),
+        true = ets:insert(Tab, {Key, 1}),
+        1
+    catch
+        error:_ ->
+            next(Tab, Key)
+    end.

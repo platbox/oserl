@@ -187,9 +187,9 @@ performance_test(SrcAddr, ShortMsg, Times) ->
               {protocol_id, ?PROTOCOL_ID_GSM},
               {priority_flag, ?PRIORITY_FLAG_GSM_CBS_NORMAL},
               {short_message, ShortMsg}],
-    {ok, Req} = operation:pack(operation:new(16#00000005, 2, Params)),
-    {ok, _PduReq} = operation:unpack(list_to_binary(Req)),
+    {ok, Req} = smpp_operation:pack(smpp_operation:new(16#00000005, 2, Params)),
+    {ok, _PduReq} = smpp_operation:unpack(list_to_binary(Req)),
     ParamsResp = [{message_id, "12345"}],
-    {ok, Resp} = operation:pack(operation:new(16#80000005, 0, 3, ParamsResp)),
-    {ok, _PduResp} = operation:unpack(list_to_binary(Resp)),
+    {ok, Resp} = smpp_operation:pack(smpp_operation:new(16#80000005, 0, 3, ParamsResp)),
+    {ok, _PduResp} = smpp_operation:unpack(list_to_binary(Resp)),
     performance_test(SrcAddr, ShortMsg, Times - 1).

@@ -36,6 +36,7 @@
 
 %%% EVENT EXPORTS
 -export([pdu/2]).
+-export([pdu/3]).
 
 %%%-----------------------------------------------------------------------------
 %%% START/STOP EXPORTS
@@ -68,7 +69,10 @@ swap_handler(Pid, HandlerArgs1, HandlerArgs2) ->
 %%%-----------------------------------------------------------------------------
 %%% EVENT EXPORTS
 %%%-----------------------------------------------------------------------------
-pdu(Pid, IoList) when is_list(IoList) ->
-    pdu(Pid, list_to_binary(IoList));
-pdu(Pid, Pdu) when is_binary(Pdu) ->
-    gen_event:notify(Pid, {pdu, Pdu}).
+pdu(Pid, IoList) ->
+    pdu(Pid, IoList, undefined).
+
+pdu(Pid, IoList, Direction) when is_list(IoList) ->
+    pdu(Pid, list_to_binary(IoList), Direction);
+pdu(Pid, Pdu, Direction) when is_binary(Pdu) ->
+    gen_event:notify(Pid, {pdu, Pdu, Direction}).

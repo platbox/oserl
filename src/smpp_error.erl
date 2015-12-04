@@ -170,5 +170,9 @@ format(?ESME_RINVBCAST_REP) ->
 format(?ESME_RINVBCASTSRVGRP) ->
     "Broadcast Service Group is invalid.";
 format(?ESME_RINVBCASTCHANIND) ->
-    "Broadcast Channel Indicator is invalid.".
+    "Broadcast Channel Indicator is invalid.";
+format(1332) ->
+    "Spam Protection Error.";
+format(N) ->
+	"Unknown SMPP Error: " ++ integer_to_list(N).
 

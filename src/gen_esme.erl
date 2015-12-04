@@ -464,14 +464,14 @@ handle_call({start_session, Opts}, _From, St) ->
             {reply, Error, St}
     end;
 handle_call({{CmdName, Params} = Req, Args}, _From, St) ->
-    Ref = req_send(St#st.session, CmdName, Params),
+    {Ref, SeqNum} = req_send(St#st.session, CmdName, Params),
     case pack((St#st.mod):handle_req(Req, Args, Ref, St#st.mod_st), St) of
         {noreply, NewSt} ->
-            {reply, ok, NewSt};
+            {reply, SeqNum, NewSt};
         {noreply, NewSt, Timeout} ->
-            {reply, ok, NewSt, Timeout};
+            {reply, SeqNum, NewSt, Timeout};
         {stop, Reason, NewSt} ->
-            {stop, ok, Reason, NewSt}
+            {stop, SeqNum, Reason, NewSt}
     end;
 handle_call(pause, _From, St) ->
     try
@@ -521,7 +521,7 @@ handle_cast(close, St) ->
     end,
     {noreply, St};
 handle_cast({{CmdName, Params} = Req, Args}, St) ->
-    Ref = req_send(St#st.session, CmdName, Params),
+    {Ref, _} = req_send(St#st.session, CmdName, Params),
     pack((St#st.mod):handle_req(Req, Args, Ref, St#st.mod_st), St);
 handle_cast({handle_closed, Reason}, St) ->
     NewSt = session_closed(St),
@@ -670,7 +670,7 @@ req_send(Pid, CmdName, Params) ->
         _Any:{Reason, _Stack} -> % Session not alive or request malformed
             Ref = make_ref(),
             handle_resp(self(), {error, Reason}, Ref),
-            Ref
+            {Ref, 0}
     end.
 
 
