@@ -35,7 +35,6 @@
 -export([add_handler/3, delete_handler/3, swap_handler/3]).
 
 %%% EVENT EXPORTS
--export([pdu/2]).
 -export([pdu/3]).
 
 %%%-----------------------------------------------------------------------------
@@ -69,9 +68,6 @@ swap_handler(Pid, HandlerArgs1, HandlerArgs2) ->
 %%%-----------------------------------------------------------------------------
 %%% EVENT EXPORTS
 %%%-----------------------------------------------------------------------------
-pdu(Pid, IoList) ->
-    pdu(Pid, IoList, undefined).
-
 pdu(Pid, IoList, Direction) when is_list(IoList) ->
     pdu(Pid, list_to_binary(IoList), Direction);
 pdu(Pid, Pdu, Direction) when is_binary(Pdu) ->

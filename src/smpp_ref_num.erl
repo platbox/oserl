@@ -44,19 +44,15 @@ next(Key) ->
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
 next(Tab, Key) ->
-    try
-        ets:update_counter(Tab, Key, 1)
-    catch
-        error:_ ->
-            populate(Tab, Key)
+    case ets:info(Tab, size) of
+        undefined ->
+            Tab = ets:new(Tab, [set, public, named_table]),
+            true = ets:insert(Tab, {Key, 1}),
+            1;
+        _ ->
+            case ets:lookup(Tab, Key) of
+                [] -> true = ets:insert(Tab, {Key, 1}), 1;
+                _  -> ets:update_counter(Tab, Key, 1)
+            end
     end.
 
-populate(Tab, Key) ->
-    try
-        Tab = ets:new(Tab, [set, public, named_table]),
-        true = ets:insert(Tab, {Key, 1}),
-        1
-    catch
-        error:_ ->
-            next(Tab, Key)
-    end.
