@@ -441,7 +441,7 @@ handle_event({input, CmdId, Pdu, _Lapse, _Timestamp}, Stn, Std)
                     handle_peer_resp({ok, Pdu}, Ref, Std),
                     {next_state, Stn, Std};
                 Status ->
-                    Reason = {command_status, Status, SeqNum},
+                    Reason = {command_status, Status},
                     handle_peer_resp({error, Reason}, Ref, Std),
                     {next_state, Stn, Std}
             end;
